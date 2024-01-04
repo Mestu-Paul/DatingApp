@@ -1,29 +1,28 @@
 ﻿using API.Data;
 using API.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")] // routing to {base}/api/users
-public class UsersController : ControllerBase
+public class UserController : ControllerBase
 {
     private readonly DataContext _context;
 
-    public UsersController(DataContext context)
+    public UserController(DataContext context)
     {
         _context = context;
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers(){
-        var users = await _context.Users.ToListAsync();
+    public ActionResult<IEnumerable<AppUser>> GetUsers(){
+        var users = _context.Users.ToList();
         return users;
     }
 
     [HttpGet("{id}")] // {base}/api/users/2
-    public async Task<ActionResult<AppUser>> GetUser(int id){
-        return await _context.Users.FindAsync(id);
+    public ActionResult<AppUser>GetUser(int id){
+        return _context.Users.Find(id);
     }
 }
