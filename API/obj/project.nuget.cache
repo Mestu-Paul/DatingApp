@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "TPPFFQfkCmeSKOySAP+XyTYs+tmuXDocf5w9DrSFSuZeMzQLNoJuqWkyKXUA2oE0ErG+Op7NpLOQSU4Il5ohbg==",
+  "dgSpecHash": "vXv96v7M7xbMp2Mk+2Vx6ZB5RMHJl6y8DOUh/QdYjYJRQwCI7OMMLqjZtAZiEtN5A6AvWhBTk5mZW9M5u5e1zQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\paul\\Documents\\DatingApp\\API\\API.csproj",
   "expectedPackageFiles": [
@@ -38,11 +38,7 @@
     "C:\\Users\\paul\\.nuget\\packages\\system.codedom\\4.4.0\\system.codedom.4.4.0.nupkg.sha512",
     "C:\\Users\\paul\\.nuget\\packages\\system.memory\\4.5.3\\system.memory.4.5.3.nupkg.sha512",
     "C:\\Users\\paul\\.nuget\\packages\\system.text.encodings.web\\7.0.0\\system.text.encodings.web.7.0.0.nupkg.sha512",
-    "C:\\Users\\paul\\.nuget\\packages\\system.text.json\\7.0.0\\system.text.json.7.0.0.nupkg.sha512",
-    "C:\\Users\\paul\\.nuget\\packages\\microsoft.netcore.app.ref\\7.0.14\\microsoft.netcore.app.ref.7.0.14.nupkg.sha512",
-    "C:\\Users\\paul\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\7.0.14\\microsoft.windowsdesktop.app.ref.7.0.14.nupkg.sha512",
-    "C:\\Users\\paul\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\7.0.14\\microsoft.aspnetcore.app.ref.7.0.14.nupkg.sha512",
-    "C:\\Users\\paul\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\7.0.14\\microsoft.netcore.app.host.win-x64.7.0.14.nupkg.sha512"
+    "C:\\Users\\paul\\.nuget\\packages\\system.text.json\\7.0.0\\system.text.json.7.0.0.nupkg.sha512"
   ],
   "logs": []
 }
