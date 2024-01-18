@@ -12,11 +12,9 @@ export const authGuard: CanActivateFn = (route, state):Observable<boolean>|boole
   return accountService.currentUser$.pipe(
     map(user => {
       if(user){
-        console.log("Calling me valid user",user);
         return true;
       }
       else{
-        console.log("Calling me invalid user",user);
         toastr.error('you shall not pass!');
         return false;
       }
