@@ -1,17 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using API.Data;
 using API.DataTransferObjects;
 using API.Entities;
 using API.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace API.Controllers
 {
@@ -39,13 +33,16 @@ namespace API.Controllers
             await _context.SaveChangesAsync();
             return new UserDTO{
                 Username = user.UserName,
-                Token = _tokentService.CreateToken(user)
+                Token = _tokentService.CreateToken(user),
+                PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url
             };
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<UserDTO>> Login(LoginDTO loginDTO){
-            var user = await _context.Users.SingleOrDefaultAsync(x => x.UserName == loginDTO.UserName);
+            var user = await _context.Users
+                    .Include(p => p.Photos)
+                    .SingleOrDefaultAsync(x => x.UserName == loginDTO.UserName);
             if(user==null)return Unauthorized("Invalid username");
 
             using var hmac = new HMACSHA512(user.PasswordSalt);
@@ -56,7 +53,8 @@ namespace API.Controllers
             }
             return new UserDTO{
                 Username = user.UserName,
-                Token = _tokentService.CreateToken(user)
+                Token = _tokentService.CreateToken(user),
+                PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url
             };
         }
         private async Task<bool> UserExist(string username){
