@@ -1,11 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Member } from '../../_models/member';
 import { MembersService } from '../../_services/members.service';
-import { Observable, take } from 'rxjs';
 import { Pagination } from '../../_models/pagination';
 import { UserParams } from '../../_models/userParams';
-import { User } from '../../_models/user';
-import { AccountService } from '../../_services/account.service';
 
 @Component({
   selector: 'app-member-list',
@@ -13,13 +10,13 @@ import { AccountService } from '../../_services/account.service';
   styleUrl: './member-list.component.css'
 })
 export class MemberListComponent implements OnInit{
-  // members$: Observable<Member[]> | undefined;
   members: Member[] = [];
   pagination: Pagination | undefined;
   userParams: UserParams | undefined;
   genderList = [{value: 'male', display: 'Male'}, {value: 'female', display: 'Female'}]
   
   constructor(private memberService: MembersService ) {
+    this.memberService.initUserParams();
     this.userParams = this.memberService.getUserParams();
   }
 
