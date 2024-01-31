@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Message } from '../../_models/message';
 import { MessageService } from '../../_services/message.service';
 import { CommonModule } from '@angular/common';
@@ -12,24 +12,38 @@ import { FormsModule, NgForm } from '@angular/forms';
   styleUrl: './member-messages.component.css',
   imports: [CommonModule, TimeagoModule, FormsModule]
 })
-export class MemberMessagesComponent implements OnInit{
+export class MemberMessagesComponent implements OnInit, AfterViewChecked, AfterViewInit{
   @ViewChild('messageForm') messageForm?: NgForm
   @Input() username?: string;
-  @Input() messages: Message[] = [];
   messageContent:string = '';
+  @ViewChild('messageList') messageList!: ElementRef;
 
-  constructor(private messageService: MessageService) {}
+  shouldScrollDown=false;
+
+  constructor(public messageService: MessageService) {}
+  ngAfterViewInit(): void {
+    this.shouldScrollDown=true;
+  }
+  ngAfterViewChecked(): void {
+    if(this.shouldScrollDown){
+      try{
+        this.messageList.nativeElement.scrollTop = this.messageList.nativeElement.scrollHeight;
+      }catch(error ){
+        // console.log(error);
+      }
+
+    }
+  }
 
   ngOnInit(): void {
+    
   }
 
   sendMessage(){
     if(!this.username)return;
-    this.messageService.sendMessage(this.username,this.messageContent).subscribe({
-      next: message => {
-        this.messages.push(message);
-        this.messageForm?.reset();
-      }
+    this.messageService.sendMessage(this.username,this.messageContent).then(() => {
+      this.messageForm?.reset();
+      this.messageList.nativeElement.scrollTop = this.messageList.nativeElement.scrollHeight;
     })
   }
 

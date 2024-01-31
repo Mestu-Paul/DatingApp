@@ -1,26 +1,27 @@
 <div class="card">
     <div class="card-body">
-        <div *ngIf="messages.length === 0">
+        <div *ngIf="(messageService.messageThread$ | async)?.length === 0">
             No messages yet... say hi by using message box bellow
         </div>
 
-        <ul *ngIf="messages.length > 0" class="chat">
-            <li *ngFor="let message of messages">
-                <div>
-                    <span class="chat-img float-end">
+        <ul #messageList *ngIf="(messageService.messageThread$ | async)!.length > 0" class="chat">
+            <li *ngFor="let message of (messageService.messageThread$ | async)">
+                <div [class.text-end]="message.senderUserName !== username">
+                    <span class="chat-img" [class.float-ent]="message.senderUserName !== username" 
+                    [class.float-start]="message.senderUserName === username">
                         <img class="rounded-circle" src="{{message.senderPhotoUrl || './assets/user.png'}}" alt="image of user">
                     </span>
                     <div class="chat-body">
                         <div class="header">
                             <small class="text-muted">
-                                <i class="fa fa-clock"></i>{{message.messageSent + 'Z' | timeago}}
+                                <i class="fa fa-clock"></i>{{message.messageSent | timeago}}
                                 <span class="text-danger" *ngIf="!message.dateRead 
                                     && message.senderUserName !== username">(unread)</span>
                                 <span class="text-success" *ngIf="message.dateRead 
-                                    && message.senderUserName !== username">(read {{message.dateRead + 'Z'| timeago}})</span>
+                                    && message.senderUserName !== username">(read {{message.dateRead| timeago}})</span>
                             </small>
                         </div>
-                        <p>{{message.content}}</p>
+                        <p >{{message.content}}</p>
                     </div>
                 </div>
             </li>
