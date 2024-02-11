@@ -1,23 +1,22 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+using API.Data;
 using API.Entities;
+using API.Extensions;
+using API.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace API.Controllers
 {
     public class AdminController : BaseApiController
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AdminController(UserManager<AppUser> userManager){
+        public AdminController(UserManager<AppUser> userManager, IUnitOfWork unitOfWork){
             _userManager = userManager;
+            _unitOfWork = unitOfWork;
         }
 
         [Authorize(Policy = "RequireAdminRole")]
@@ -55,8 +54,22 @@ namespace API.Controllers
 
         [Authorize(Policy = "ModeratePhotoRole")]
         [HttpGet("photos-to-moderate")]
-        public ActionResult GetPhotosForModeration(){
-            return Ok("Admin or Moderator can see this");
+        public async Task<ActionResult> GetPhotosForModeration(){
+            return Ok(await _unitOfWork.PhotoRepository.GetUnapprovedPhotos());
+        }
+
+        [Authorize(Policy = "ModeratePhotoRole")]
+        [HttpPut("photos-to-moderate/approve/{photoId}")]
+        public async Task<ActionResult> ApprovePhoto(int photoId){
+            if(await _unitOfWork.PhotoRepository.ApprovePhoto(photoId))return Ok();
+            return BadRequest("Problem approving photo");
+        }
+
+        [Authorize(Policy = "ModeratePhotoRole")]
+        [HttpDelete("photos-to-moderate/delete/{photoId}")]
+        public async Task<ActionResult> DeletePhoto(int photoId){
+            if(await _unitOfWork.PhotoRepository.DeletePhoto(photoId))return Ok();
+            return BadRequest("Problem deleting photo");
         }
     }
 }

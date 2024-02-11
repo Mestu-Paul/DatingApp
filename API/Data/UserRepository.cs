@@ -19,12 +19,15 @@ namespace API.Data
             _mapper = mapper;
         }
 
-        public async Task<MemberDTO> GetMemberAsync(string username)
+        public async Task<MemberDTO> GetMemberAsync(string username, bool currentUser = false)
         {
-            return await _context.Users
+            var query =  _context.Users
                 .Where(x => x.UserName == username)
                 .ProjectTo<MemberDTO>(_mapper.ConfigurationProvider)
-                .SingleOrDefaultAsync();
+                .AsQueryable();
+            if(currentUser)query = query.IgnoreQueryFilters();
+
+            return await query.FirstOrDefaultAsync();
         }
 
         public async Task<PagedList<MemberDTO>> GetMembersAsync(UserParams userParams)
@@ -33,6 +36,7 @@ namespace API.Data
 
             query = query.Where(u => u.UserName != userParams.CurrentUsername);
             query = query.Where(u => u.Gender == userParams.Gender);
+            // query = query.Include(u => u.Photos.Where(x => x.IsApproved == true));
             
             var minDob = DateOnly.FromDateTime(DateTime.Today.AddYears(-userParams.MaxAge-1));
             var maxDob = DateOnly.FromDateTime(DateTime.Today.AddYears(-userParams.MinAge ));
@@ -43,6 +47,7 @@ namespace API.Data
                 "created" => query.OrderByDescending(u => u.Created),
                 _ => query.OrderByDescending(u => u.LastActive)
             };
+
 
             return await PagedList<MemberDTO>.CreateAsync(
                 query.AsNoTracking().ProjectTo<MemberDTO>(_mapper.ConfigurationProvider),

@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-using API.Data;
-using API.DataTransferObjects;
+﻿using API.DataTransferObjects;
 using API.Entities;
 using API.Extensions;
 using API.Helpers;
@@ -39,7 +37,8 @@ public class UsersController : BaseApiController
 
     [HttpGet("{username}")] // {base}/api/users/2
     public async Task<ActionResult<MemberDTO>>GetUser(string username){
-        return await _uow.UserRepository.GetMemberAsync(username);
+        var user = await _uow.UserRepository.GetUserByUsernameAsync(User.GetUsername());
+        return await _uow.UserRepository.GetMemberAsync(username, username==user.UserName);
     }
 
     [HttpPut]
@@ -63,7 +62,8 @@ public class UsersController : BaseApiController
 
         var photo = new Photo{
             Url = result.SecureUrl.AbsoluteUri,
-            PublicId = result.PublicId
+            PublicId = result.PublicId,
+            IsApproved = false
         };
 
         if(user.Photos.Count == 0)photo.IsMain = true;
@@ -86,6 +86,7 @@ public class UsersController : BaseApiController
         var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);
 
         if(photo == null) return NotFound();
+        if(!photo.IsApproved)return BadRequest("This photo is not approved yet");
         if(photo.IsMain)return BadRequest("this is alread main photo");
         var currentMain  = user.Photos.FirstOrDefault(x => x.IsMain);
         if(currentMain != null)currentMain.IsMain = false;
